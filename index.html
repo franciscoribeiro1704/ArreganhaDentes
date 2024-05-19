@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Arreganhadentes Escape</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jacquard+12&display=swap');
+
+        :root {
+            --gradiente: linear-gradient(45deg, #0f1921, #314054);
+
+        }
+
+        #recursos {
+            display: none;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .color {
+            background: var(--gradiente);
+        }
+
+        canvas {
+            border: 5px solid #F88379;
+            border-radius: 10px;
+        }
+
+    </style>
+    <script src="Ludoteca.js"></script>
+    <script>
+        var tela;
+        var contexto;
+        var fundo;
+        var play;
+        var som;
+        var audioPlaying = false;
+
+        var p;
+        var pr;
+        var perso;
+        var persor;
+        var o;
+        var or;
+        var s;
+        var sr;
+
+
+        function inicia() {
+            tela = new Tela(document.getElementById("tela"));
+            contexto = tela.contexto;
+
+            fundo = new Imagem(0, 0, document.getElementById("fundo"));
+
+
+            p = new Texto(590, 350, "Play", "white", "white", 2);
+            p.fonte = "jacquard";
+            pr = new Rectangulo(590, 350, 105, 55, "#674b3b", 0, 0);
+            pr.opacidade = 0;
+            p.tamanho = 50;
+            
+
+            perso = new Texto(510, 420, "Personagens", "white", "white", 2);
+            perso.fonte = "jacquard";
+            persor = new Rectangulo(510, 420, 305, 55, "#674b3b", 0, 0);
+            persor.opacidade = 0;
+            perso.tamanho = 50;
+
+            o = new Texto(553, 485, "Opções", "white", "white", "2", "jacquard");
+            o.fonte = "jacquard";
+            or = new Rectangulo(553, 485, 175, 55, "black", 0, 0);
+            or.opacidade = 0;
+            o.tamanho = 50;
+
+            s = new Imagem(605, 560, document.getElementById("audio"));
+            sr = new Rectangulo(605, 560, 50, 55, "black", 0, 0);
+            sr.opacidade = 0;
+
+
+            som = new Som(document.getElementById("som"));
+            som.volume = 0.4;
+            
+
+
+            tela.processaClique = processaClique;
+            tela.processaRatoDescido = processaRatoDescido;
+            tela.processaRatoSubido = processaRatoSubido;
+            tela.processaRatoMovido = processaRatoMovido;
+            
+        }
+
+        function desenha() {
+            contexto.clearRect(0, 0, tela.largura, tela.altura);
+            fundo.desenha(tela);
+            p.desenha(tela);
+            pr.desenha(tela);
+            perso.desenha(tela);
+            persor.desenha(tela);
+            o.desenha(tela);
+            or.desenha(tela);
+            s.desenha(tela);
+            sr.desenha(tela);
+            som.reproduz();
+
+
+
+            window.requestAnimationFrame(desenha);
+        }
+
+        function processaClique() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //... 
+            
+
+        }
+
+        function processaRatoDescido() {
+            if (pr.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "EscolherPersonagem.html";
+            }
+            if (persor.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "Personagens.html";
+            }
+            if (or.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "opcoes.html";
+            }
+            if (sr.contemPonto(tela.ratoX, tela.ratoY)) {
+                if (audioPlaying) {
+                    s.imagem = document.getElementById("audio");
+                    audioPlaying = false;
+                    som.volume = 0.4;
+                    
+                } else {
+                    s.imagem = document.getElementById("audio2");
+                    audioPlaying = true;
+                    som.volume = 0;                  
+                }
+            }
+        }
+        
+
+
+        function processaRatoMovido() {
+            // ...
+        }
+
+        function processaRatoSubido() {
+            //...
+        }
+
+
+        window.onload = function () {
+            inicia();
+            desenha();
+        }
+
+    </script>
+</head>
+
+<body class="color">
+    <canvas id="tela" width="1280" height="720"> o seu browser nao suporta o elemento canvas</canvas>
+    <div id="recursos">
+        <audio id="som" src="recursos/Chopsticks.mp3" autoplay></audio>
+        <img id="fundo" src="recursos/fundo-01.png">
+        <img id="audio" src="recursos/audio.png">
+        <img id="audio2" src="recursos/audio2.png">
+    </div>
+</body>
+
+</html>

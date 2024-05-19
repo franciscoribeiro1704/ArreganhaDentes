@@ -1,0 +1,75 @@
+:root {
+    --gradiente: linear-gradient(45deg, #0f1921,#314054);
+
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.color {
+    background: var(--gradiente);
+}
+
+.canvas-container {
+    text-align: relative;
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+}
+
+#tela {
+    border: 5px solid #314054;
+    display: block;
+}
+
+.button-container{
+    text-align: center;
+    position: absolute;
+    top: 43%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1;
+}
+
+.button-container button{
+    display: block;
+    padding-bottom: 20px;
+    margin: 10px auto;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-family: whitestone, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 350%;
+}
+
+.voltar {
+    text-align: center;
+    position: absolute;
+    top: 77%;
+    left: 25%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1;
+}
+
+.voltar button {
+    display: block;
+    padding-bottom: 20px;
+    margin: 10px auto;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-family: whitestone, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 200%;
+}
+
+
+

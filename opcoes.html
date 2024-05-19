@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Arreganhadentes Escape</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jacquard+12&display=swap');
+
+        :root {
+            --gradiente: linear-gradient(45deg, #0f1921, #314054);
+
+        }
+
+        #recursos {
+            display: none;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .color {
+            background: var(--gradiente);
+        }
+
+        canvas {
+            border: 5px solid #F88379;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="Ludoteca.js"></script>
+    <script>
+        var tela;
+        var contexto;
+        var fundo;
+        var botao;
+        var clica;
+        var txt;
+
+
+        function inicia() {
+            tela = new Tela(document.getElementById("tela"));
+            contexto = tela.contexto;
+
+            fundo = new Imagem(0, 0, document.getElementById("fundo"));
+
+                  
+            botao = new Texto(100, 650, "Voltar", "white", "white",  2);
+            botao.fonte = "jacquard";
+            botao.tamanho = 30;
+            clica = new Rectangulo(85, 637, 100, 50, "#674b3b", 0, 0);
+            clica.visivel = false;
+
+            txt = new Texto(700, 320, "Andar", "white", "white", 2);
+            txt2 = new Texto(700, 460, "Saltar / Interagir", "white", "white", 2);
+            txt3 = new Texto(700, 580, "Pausa", "white", "white", 2);
+            txt.fonte = "jacquard";
+            txt.tamanho = 60;
+            txt2.fonte = "jacquard";
+            txt2.tamanho = 60;
+            txt3.fonte = "jacquard";
+            txt3.tamanho = 60;
+
+            
+            
+
+
+            tela.processaClique = processaClique;
+            tela.processaRatoDescido = processaRatoDescido;
+            tela.processaRatoSubido = processaRatoSubido;
+            tela.processaRatoMovido = processaRatoMovido;
+            
+        }
+
+        function desenha() {
+            contexto.clearRect(0, 0, tela.largura, tela.altura);
+            fundo.desenha(tela);
+            botao.desenha(tela);
+            clica.desenha(tela);
+            txt.desenha(tela);
+            txt2.desenha(tela);
+            txt3.desenha(tela);
+
+
+
+            window.requestAnimationFrame(desenha);
+        }
+
+        function processaClique() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //... 
+            
+
+        }
+
+        function processaRatoDescido() {
+            if (clica.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "index.html";
+            }
+            
+        }
+        
+
+
+        function processaRatoMovido() {
+            // ...
+        }
+
+        function processaRatoSubido() {
+            //...
+        }
+
+
+        window.onload = function () {
+            inicia();
+            desenha();
+        }
+    </script>
+
+<body class="color">
+    <canvas id="tela" width="1280" height="720"> o seu browser nao suporta o elemento canvas</canvas>
+    <div id="recursos">
+        <img id="fundo" src="recursos/opcoes-03.png">
+    </div>
+</body>
+
+</html>

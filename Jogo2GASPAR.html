@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Arreganhadentes Escape</title>
+    <meta name="Arreganhadentes Escape" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jacquard+12&display=swap');
+
+        :root {
+            --gradiente: linear-gradient(45deg, #0f1921, #314054);
+
+        }
+
+        #recursos {
+            display: none;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .color {
+            background: var(--gradiente);
+        }
+
+        canvas {
+            border: 5px solid #F88379;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="Ludoteca.js"></script>
+    <script>
+        var tela;
+        var contexto;
+        var fundo;
+        var casa;
+        var fundoX = 0;
+        var continua = true;
+        var pausa = false;
+        var som;
+        var contador;
+
+        var distX
+        var distY
+
+        var parede;
+        var objetos;
+        var entrada;
+
+        var player;
+        var bruxa;
+        var sbruxa;
+        var key;
+        var skey;
+
+        var contador;
+        var p;
+        var erro;
+        var serro;
+        var vitoria;
+
+        var racioX;
+        var racioY;
+
+        var ratoX;
+        var ratoY;
+
+        function inicia() {
+            tela = new Tela(document.getElementById("tela"));
+            contexto = tela.contexto;
+            contador = 0;
+
+
+            casa = new Imagem(0, 0, document.getElementById("fundo"));
+            fundo = new Imagem(0, 0, document.getElementById("fundo2"));
+            player = new ImagemAnimada(tela.largura * 0.165, tela.altura * 0.17, document.getElementById("player"), 4, 8, 2);
+            player.animado = false;
+            bruxa = new ImagemAnimada(tela.largura * 0.6, tela.altura * 0.75, document.getElementById("bruxa"), 4, 8, 2);
+            bruxa.deltaX = 3;
+            bruxa.deltaY = 3;
+            key = new Imagem(1110, 280, document.getElementById("key"));
+            key.visivel = false;
+            key.activo = false;
+            // bruxa.animado = false;
+
+            som = new Som(document.getElementById("musica"));
+            som.volume = 0.05;
+
+            sbruxa = new Som(document.getElementById("sBruxa"));
+            sbruxa.volume = 0.06;
+
+            skey = new Som(document.getElementById("som_chave"));
+
+            serro = new Som(document.getElementById("erro"));
+            serro.volume = 0.1;
+
+            //Caixa de texto
+            pf = new Rectangulo(490, 90, 300, 40, "black");
+            pf.visivel = false;
+            pf.opacidade = 0.7;
+            p = new Texto(520, 100, "Aqui não há nada, só migalhas.", "white");
+            p.visivel = false;
+            p.tamanho = 20;
+            p.fonte = "Jacquard";
+
+            pf1 = new Rectangulo(520, 90, 280, 40, "black");
+            pf1.visivel = false;
+            pf1.opacidade = 0.7;
+            p1 = new Texto(550, 100, "Esta armadura é aterradora.", "white");
+            p1.visivel = false;
+            p1.tamanho = 20;
+            p1.fonte = "Jacquard";
+
+            pf2 = new Rectangulo(520, 90, 280, 40, "black");
+            pf2.visivel = false;
+            pf2.opacidade = 0.7;
+            p2 = new Texto(550, 100, "Esta armadura é aterradora.", "white");
+            p2.visivel = false;
+            p2.tamanho = 20;
+            p2.fonte = "Jacquard";
+
+            pf3 = new Rectangulo(520, 90, 260, 40, "black");
+            pf3.visivel = false;
+            pf3.opacidade = 0.7;
+            p3 = new Texto(560, 100, "Tanto pó, num banco só.", "white");
+            p3.visivel = false;
+            p3.tamanho = 20;
+            p3.fonte = "Jacquard";
+
+            pf4 = new Rectangulo(520, 90, 260, 40, "black");
+            pf4.visivel = false;
+            pf4.opacidade = 0.7;
+            p4 = new Texto(560, 100, "Tanto pó, num banco só.", "white");
+            p4.visivel = false;
+            p4.tamanho = 20;
+            p4.fonte = "Jacquard";
+
+            pf5 = new Rectangulo(520, 90, 260, 40, "black");
+            pf5.visivel = false;
+            pf5.opacidade = 0.7;
+            p5 = new Texto(560, 100, "Tanto pó, num banco só.", "white");
+            p5.visivel = false;
+            p5.tamanho = 20;
+            p5.fonte = "Jacquard";
+
+            pf6 = new Rectangulo(520, 90, 260, 40, "black");
+            pf6.visivel = false;
+            pf6.opacidade = 0.7;
+            p6 = new Texto(560, 100, "Algo bonito nesta casa...", "white");
+            p6.visivel = false;
+            p6.tamanho = 20;
+            p6.fonte = "Jacquard";
+
+            pf7 = new Rectangulo(520, 90, 260, 40, "black");
+            pf7.visivel = false;
+            pf7.opacidade = 0.7;
+            p7 = new Texto(560, 100, "Que desarrumação", "white");
+            p7.visivel = false;
+            p7.tamanho = 20;
+            p7.fonte = "Jacquard";
+
+            pf8 = new Rectangulo(600, 90, 180, 40, "black");
+            pf8.visivel = false;
+            pf8.opacidade = 0.7;
+            p8 = new Texto(650, 100, "Trancado...", "white");
+            p8.visivel = false;
+            p8.tamanho = 20;
+            p8.fonte = "Jacquard";
+
+            pf9 = new Rectangulo(580, 90, 250, 40, "black");
+            pf9.visivel = false;
+            pf9.opacidade = 0.7;
+            p9 = new Texto(600, 100, "Que objeto.... taõ estranho", "white");
+            p9.visivel = false;
+            p9.tamanho = 20;
+            p9.fonte = "Jacquard";
+
+            pf10 = new Rectangulo(500, 90, 420, 40, "black");
+            pf10.visivel = false;
+            pf10.opacidade = 0.7;
+            p10 = new Texto(520, 100, "Cama Confortável, Não ME POSSO DISTRAIR", "white");
+            p10.visivel = false;
+            p10.tamanho = 20;
+            p10.fonte = "Jacquard";
+
+            pf11 = new Rectangulo(600, 90, 170, 40, "black");
+            pf11.visivel = false;
+            pf11.opacidade = 0.7;
+            p11 = new Texto(620, 100, "Será que é isto?", "white");
+            p11.visivel = false;
+            p11.tamanho = 20;
+            p11.fonte = "Jacquard";
+
+            pf12 = new Rectangulo(600, 90, 220, 40, "black");
+            pf12.visivel = false;
+            pf12.opacidade = 0.7;
+            p12 = new Texto(620, 100, "Tenho de ter cuidado...", "white");
+            p12.visivel = false;
+            p12.tamanho = 20;
+            p12.fonte = "Jacquard";
+
+            erro = new Texto(200, 50, "Bem aqui não está nada", "white");
+            erro.fonte = "Jacquard";
+            erro.tamanho = 20;
+            errof = new Rectangulo(180, 40, 220, 40, "red");
+            errof.opacidade = 0.5;
+            errof.visivel = false;
+            erro.visivel = false;
+
+            //Fim do Jogo
+
+            q = new Rectangulo(0, 0, tela.largura, tela.altura, "black");
+            q.opacidade = 0.4;
+            v = new Texto(500, 160, "Vitória!", "yellow");
+            v.tamanho = 100;
+            b = new Texto(575, 380, "Continua", "white");
+            b.tamanho = 40;
+            bf = new Rectangulo(575, 380, 155, 35, "#674b3b", 0, 0);
+            bf.opacidade = 0;
+            q.activo = false;
+            v.activo = false;
+            b.activo = false;
+            bf.activo = false;
+            q.visivel = false;
+            v.visivel = false;
+            b.visivel = false;
+            bf.visivel = false;
+
+
+
+            //parede
+            parede = new Rectangulo(70, 30, 20, 470, "black");
+            parede1 = new Rectangulo(70, 100, 470, 20, "black");
+            parede2 = new Rectangulo(70, 485, 220, 20, "black");
+            parede3 = new Rectangulo(280, 485, 20, 120, "black");
+            parede4 = new Rectangulo(280, 590, 240, 20, "black");
+            parede5 = new Rectangulo(515, 380, 35, 290, "black");
+            parede6 = new Rectangulo(516, 380, 340, 35, "black");
+            parede7 = new Rectangulo(515, 645, 460, 35, "black");
+            parede8 = new Rectangulo(970, 540, 90, 200, "black");
+            parede9 = new Rectangulo(1050, 670, 160, 20, "black");
+            parede10 = new Rectangulo(1175, 80, 20, 600, "black");
+            parede11 = new Rectangulo(820, 80, 35, 300, "black");
+            parede12 = new Rectangulo(820, 80, 360, 150, "black");
+            parede13 = new Rectangulo(515, 100, 85, 150, "black");
+            parede14 = new Rectangulo(750, 390, 100, 120, "black");
+            parede.visivel = false;
+            parede1.visivel = false;
+            parede2.visivel = false;
+            parede3.visivel = false;
+            parede4.visivel = false;
+            parede5.visivel = false;
+            parede6.visivel = false;
+            parede7.visivel = false;
+            parede8.visivel = false;
+            parede9.visivel = false;
+            parede10.visivel = false;
+            parede11.visivel = false;
+            parede12.visivel = false;
+            parede13.visivel = false;
+            parede14.visivel = false;
+
+
+
+            objetos = new Rectangulo(265, 270, 50, 80, "black");
+            objetos1 = new Rectangulo(90, 350, 10, 80, "black");
+            objetos2 = new Rectangulo(90, 170, 10, 80, "black");
+            objetos3 = new Rectangulo(300, 490, 30, 80, "black");
+            objetos4 = new Rectangulo(480, 490, 30, 80, "black");
+            objetos5 = new Rectangulo(520, 250, 70, 20, "black");
+            objetos6 = new Rectangulo(610, 120, 200, 10, "black");
+            objetos7 = new Rectangulo(550, 390, 100, 300, "black");
+            objetos8 = new Rectangulo(970, 420, 95, 20, "black");
+            objetos9 = new Rectangulo(860, 280, 15, 50, "black");
+            objetos10 = new Rectangulo(1030, 200, 45, 40, "black");
+            objetos11 = new Rectangulo(1110, 210, 45, 100, "black");
+            objetos12 = new Rectangulo(1115, 310, 45, 10, "black");
+            objetos13 = new Rectangulo(1135, 460, 10, 40, "black");
+            objetos14 = new Rectangulo(1070, 600, 100, 40, "black");
+            objetos.visivel = false;
+            objetos1.visivel = false;
+            objetos2.visivel = false;
+            objetos3.visivel = false;
+            objetos4.visivel = false;
+            objetos5.visivel = false;
+            objetos6.visivel = false;
+            objetos7.visivel = false;
+            objetos8.visivel = false;
+            objetos9.visivel = false;
+            objetos10.visivel = false;
+            objetos11.visivel = false;
+            objetos12.visivel = false;
+            objetos13.visivel = false;
+            objetos14.visivel = false;
+
+
+            entrada = new Rectangulo(770, 280, 40, 50, "red");
+            entrada1 = new Rectangulo(670, 450, 60, 50, "red");
+            entrada.visivel = false;
+            entrada1.visivel = false;
+
+
+
+
+
+            tela.processaClique = processaClique;
+            tela.processaRatoDescido = processaRatoDescido;
+            tela.processaRatoSubido = processaRatoSubido;
+            tela.processaRatoMovido = processaRatoMovido;
+            tela.processaTeclaDescida = processaTeclaDescida;
+            tela.processaTeclaSubida = processaTeclaSubida;
+        }
+
+
+
+
+
+        function desenha() {
+            contexto.clearRect(0, 0, tela.largura, tela.altura);
+            fundo.desenha(tela);
+            casa.desenha(tela);
+            som.reproduz();
+            sbruxa.reproduz();
+            player.desenha(tela);
+            bruxa.desenha(tela);
+            key.desenha(tela);
+            parede.desenha(tela);
+            parede1.desenha(tela);
+            parede2.desenha(tela);
+            parede3.desenha(tela);
+            parede4.desenha(tela);
+            parede5.desenha(tela);
+            parede6.desenha(tela);
+            parede7.desenha(tela);
+            parede8.desenha(tela);
+            parede9.desenha(tela);
+            parede10.desenha(tela);
+            parede11.desenha(tela);
+            parede12.desenha(tela);
+            parede13.desenha(tela);
+            parede14.desenha(tela);
+            objetos.desenha(tela);
+            objetos1.desenha(tela);
+            objetos2.desenha(tela);
+            objetos3.desenha(tela);
+            objetos4.desenha(tela);
+            objetos5.desenha(tela);
+            objetos6.desenha(tela);
+            objetos7.desenha(tela);
+            objetos8.desenha(tela);
+            objetos9.desenha(tela);
+            objetos10.desenha(tela);
+            objetos11.desenha(tela);
+            objetos12.desenha(tela);
+            objetos13.desenha(tela);
+            objetos14.desenha(tela);
+            entrada.desenha(tela);
+            entrada1.desenha(tela);
+            pf.desenha(tela);
+            p.desenha(tela);
+            pf1.desenha(tela);
+            p1.desenha(tela);
+            pf2.desenha(tela);
+            p2.desenha(tela);
+            pf3.desenha(tela);
+            p3.desenha(tela);
+            pf4.desenha(tela);
+            p4.desenha(tela);
+            pf5.desenha(tela);
+            p5.desenha(tela);
+            pf6.desenha(tela);
+            p6.desenha(tela);
+            pf7.desenha(tela);
+            p7.desenha(tela);
+            pf8.desenha(tela);
+            p8.desenha(tela);
+            pf9.desenha(tela);
+            p9.desenha(tela);
+            pf10.desenha(tela);
+            p10.desenha(tela);
+            pf11.desenha(tela);
+            p11.desenha(tela);
+            pf12.desenha(tela);
+            p12.desenha(tela);
+            errof.desenha(tela);
+            erro.desenha(tela);
+            q.desenha(tela);
+            v.desenha(tela);
+            b.desenha(tela);
+            bf.desenha(tela);
+
+
+
+
+
+
+
+            player.colide(parede, true);
+            player.colide(parede1, true);
+            player.colide(parede2, true);
+            player.colide(parede3, true);
+            player.colide(parede4, true);
+            player.colide(parede5, true);
+            player.colide(parede6, true);
+            player.colide(parede7, true);
+            player.colide(parede8, true);
+            player.colide(parede9, true);
+            player.colide(parede10, true);
+            player.colide(parede11, true);
+            player.colide(parede12, true);
+            player.colide(parede13, true);
+            player.colide(parede14, true);
+
+
+
+
+            bruxa.colide(parede, true);
+            bruxa.colide(parede1, true);
+            bruxa.colide(parede2, true);
+            bruxa.colide(parede3, true);
+            bruxa.colide(parede4, true);
+            bruxa.colide(parede5, true);
+            bruxa.colide(parede6, true);
+            bruxa.colide(parede7, true);
+            bruxa.colide(parede8, true);
+            bruxa.colide(parede9, true);
+            bruxa.colide(parede10, true);
+            bruxa.colide(parede11, true);
+            bruxa.colide(parede12, true);
+            bruxa.colide(parede13, true);
+            bruxa.colide(parede14, true);
+
+
+
+            // player vs objetos
+
+            if (player.colide(objetos, true)) {
+
+                pf.visivel = true;
+                p.visivel = true;
+
+            } else {
+                p.visivel = false;
+                pf.visivel = false;
+            }
+
+            if (player.colide(objetos1, true)) {
+
+
+                pf1.visivel = true;
+                p1.visivel = true;
+
+            } else {
+                p1.visivel = false;
+                pf1.visivel = false;
+            }
+
+            if (player.colide(objetos2, true)) {
+
+
+                pf2.visivel = true;
+                p2.visivel = true;
+
+            } else {
+                p2.visivel = false;
+                pf2.visivel = false;
+            }
+
+            if (player.colide(objetos3, true)) {
+
+
+                pf3.visivel = true;
+                p3.visivel = true;
+
+            } else {
+                p3.visivel = false;
+                pf3.visivel = false;
+            }
+
+            if (player.colide(objetos4, true)) {
+
+
+                pf4.visivel = true;
+                p4.visivel = true;
+
+            } else {
+                p4.visivel = false;
+                pf4.visivel = false;
+            }
+
+            if (player.colide(objetos5, true)) {
+
+
+                pf5.visivel = true;
+                p5.visivel = true;
+
+            } else {
+                p5.visivel = false;
+                pf5.visivel = false;
+            }
+
+            if (player.colide(objetos6, true)) {
+                pf6.visivel = true;
+                p6.visivel = true;
+            } else {
+                p6.visivel = false;
+                pf6.visivel = false;
+            }
+
+            if (player.colide(objetos7, true)) {
+                p7.visivel = true;
+                pf7.visivel = true;
+            } else {
+                p7.visivel = false;
+                pf7.visivel = false;
+            }
+
+            player.colide(objetos8, true);
+
+            if (player.colide(objetos9, true)) {
+                pf8.visivel = true;
+                p8.visivel = true;
+            } else {
+                p8.visivel = false;
+                pf8.visivel = false;
+            }
+
+            if (player.colide(objetos10, true)) {
+                pf9.visivel = true;
+                p9.visivel = true;
+            } else {
+                p9.visivel = false;
+                pf9.visivel = false;
+            }
+
+            if (player.colide(objetos11, true)) {
+                pf10.visivel = true;
+                p10.visivel = true;
+                p9.visivel = false;
+                pf9.visivel = false;
+            } else {
+                p10.visivel = false;
+                pf10.visivel = false;
+            }
+
+            if (player.colide(objetos12, true)) {
+                pf11.visivel = true;
+                p11.visivel = true;
+                p10.visivel = false;
+                pf10.visivel = false;
+
+            } else {
+                p11.visivel = false;
+                pf11.visivel = false;
+            }
+
+            player.colide(objetos13, true);
+
+            if (player.colide(objetos14, true)) {
+                pf12.visivel = true;
+                p12.visivel = true;
+            } else {
+                p12.visivel = false;
+                pf12.visivel = false;
+            }
+
+            // bruxa vs objetos
+            bruxa.colide(objetos, true);
+            bruxa.colide(objetos1, true);
+            bruxa.colide(objetos2, true);
+            bruxa.colide(objetos3, true);
+            bruxa.colide(objetos4, true);
+            bruxa.colide(objetos5, true);
+            bruxa.colide(objetos6, true);
+            bruxa.colide(objetos7, true);
+            bruxa.colide(objetos8, true);
+            bruxa.colide(objetos9, true);
+            bruxa.colide(objetos10, true);
+            bruxa.colide(objetos11, true);
+            bruxa.colide(objetos12, true);
+            bruxa.colide(objetos13, true);
+            bruxa.colide(objetos14, true);
+
+
+            // Entradas
+
+            if (player.colide(entrada, true)) {
+                console.log("Entrou");
+                player.x = 700;
+                player.y = 520;
+                atualizaBruxa();
+            }
+            if (player.colide(entrada1, true)) {
+                console.log("Entrou");
+                player.x = 700;
+                player.y = 250;
+            }
+
+            if (bruxa.colide(entrada, true)) {
+                console.log("Entrou");
+                bruxa.x = 700;
+                bruxa.y = 520;
+                atualizaBruxa();
+            }
+            if (bruxa.colide(entrada1, true)) {
+                console.log("Entrou");
+                bruxa.x = 700;
+                bruxa.y = 250;
+            }
+
+
+
+
+            if (continua) {
+                contador++;
+                window.requestAnimationFrame(desenha);
+            }
+
+        }
+
+        function processaClique() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+
+        }
+
+        function processaRatoDescido() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+            if (bf.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "Jogo3GASPAR.html";
+            }
+
+        }
+
+        function processaRatoSubido() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+
+        }
+
+        function processaRatoMovido() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+
+        }
+
+        function processaTeclaDescida() {
+            // usar a propriedade tela.codigoTecla, referente à tecla usada pelo utilizador
+            if (tela.codigoTecla == "Space") {        // barra de espaços
+                if (player.colide(objetos12, true)) {
+                    key.visivel = true;
+                    key.activo = true;
+                    skey.reproduz();
+                    q.activo = true;
+                    q.visivel = true;
+                    v.activo = true;
+                    v.visivel = true;
+                    v.tamanho = 100;
+                    b.activo = true;
+                    b.visivel = true;
+                    bf.activo = true;
+                    bf.visivel = true;
+                    pausaJogo();
+                    pausa = true;
+                    continua = false;
+
+
+                } else {
+                    key.visivel = false;
+                    key.activo = false;
+                    errof.visivel = true;
+                    erro.visivel = true;
+                    serro.reproduz();
+                }
+                //...
+
+            }
+            if (tela.codigoTecla == "ArrowLeft") {    // esquerda
+                player.indiceTira = 1;
+                player.deltaX = -6;
+                player.animado = true;
+
+                //...
+
+            }
+            if (tela.codigoTecla == "ArrowUp") {      // cima
+                //...
+                player.indiceTira = 0;
+                player.deltaY = -6;
+                player.animado = true;
+            }
+            if (tela.codigoTecla == "ArrowRight") {   // direita
+                player.indiceTira = 0;
+                player.deltaX = 6;
+                player.animado = true;
+                //...
+            }
+
+            if (tela.codigoTecla == "ArrowDown") {    // baixo
+                //...
+                player.indiceTira = 1;
+                player.deltaY = 6;
+                player.animado = true;
+            }
+            if (tela.codigoTecla == "e") { // Interação
+                //...
+            }
+            if (event.key == 'p' || event.key === 'P') {  // Pausa
+                if (pausa) {
+                    // Se o jogo estiver pausado, retome o jogo
+                    retomaJogo();
+                    pausa = false;
+                    continua = true;
+
+                } else {
+                    // Se o jogo não estiver pausado, pause o jogo
+                    pausaJogo();
+                    pausa = true;
+                    continua = false;
+
+                }
+            }
+        }
+
+        function processaTeclaSubida() {
+            // usar a propriedade tela.codigoTecla, referente à tecla usada pelo utilizador
+            if (tela.codigoTecla == "Space") {
+                errof.visivel = false;
+                erro.visivel = false;
+            }
+            if ((tela.codigoTecla == "ArrowLeft") || (tela.codigoTecla == "ArrowRight")) {
+                player.indiceTira = 0;
+                player.deltaX = 0;
+                player.animado = false;
+                //...
+            }
+            if ((tela.codigoTecla == "ArrowUp") || (tela.codigoTecla == "ArrowDown")) {
+                //...
+                player.indiceTira = 0;
+                player.deltaY = 0;
+                player.animado = false;
+            }
+            if (tela.codigoTecla == "E") {
+                //...
+            }
+            if (tela.codigoTecla == "P") {
+                //...
+            }
+        }
+
+
+
+        function atualizaBruxa() {
+            distX = player.x - bruxa.x;
+            distY = player.y - bruxa.y;
+
+            // Calcula a distância total entre a bruxa e o jogador
+            var distTotal = Math.sqrt(distX * distX + distY * distY);
+
+            // Calcula a velocidade da bruxa com base na distância
+            var velocidade = distTotal * 6;
+
+            // Calcula a direção da bruxa
+            var direcaoX = distX / 20;
+            var direcaoY = distY / 20;
+
+            // Move a bruxa na direção do jogador
+            bruxa.x += direcaoX * 0.5;
+            bruxa.y += direcaoY * 0.5;
+
+            window.requestAnimationFrame(atualizaBruxa);
+        }
+
+
+         // Chama a função atualizaBruxa em cada frame do jogo
+         
+
+        function pausaJogo() {
+            //...
+            pausa = true;
+            continua = false;
+            console.log("Jogo em pausa");
+
+        }
+
+        function retomaJogo() {
+            //...
+            pausa = false;
+            continua = true;
+            console.log("Jogo retomado");
+            window.requestAnimationFrame(desenha);
+        }
+
+        window.onload = function () {
+            inicia();
+            desenha();
+        }
+
+    </script>
+</head>
+
+<body class="color">
+    <canvas id="tela" width="1280" height="720">O seu <em>browser</em> não suporta o elemento</canvas>
+    <div id="recursos">
+        <audio id="musica" src="recursos/Night.mp3" autoplay></audio>
+        <audio id="som_bernegia" src="recursos/bolaE.wav" type="audio/wav"></audio>
+        <audio id="sBruxa" src="recursos/Witch.wav" autoplay></audio>
+        <audio id="som_chave" src="recursos/smw_keyhole_exit.wav"></audio>
+        <audio id="erro" src="recursos/erro.mp3"></audio>
+        <img id="fundo" src="recursos/casa.png">
+        <img id="fundo2" src="recursos/florest.png">
+        <img id="player" src="recursos/GasparAndar.png">
+        <img id="bruxa" src="recursos/bruxa.png">
+        <img id="key" src="recursos/key.png">
+
+    </div>
+
+</body>
+
+</html>

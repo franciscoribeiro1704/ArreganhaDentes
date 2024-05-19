@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Arreganhadentes Escape</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jacquard+12&display=swap');
+
+        :root {
+            --gradiente: linear-gradient(45deg, #0f1921, #314054);
+
+        }
+
+        #recursos {
+            display: none;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .color {
+            background: var(--gradiente);
+        }
+
+        canvas {
+            border: 5px solid #F88379;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="Ludoteca.js"></script>
+    <script>
+        var tela;
+        var contexto;
+        var fundo;
+        var joao;
+        var gaspar;
+        var antonio;
+        var clica;
+        var player;
+
+
+        function inicia() {
+            tela = new Tela(document.getElementById("tela"));
+            contexto = tela.contexto;
+
+
+
+            joao = new Imagem(tela.largura * 0.15, tela.altura * 0.4, document.getElementById("Joao"));
+            gaspar = new Imagem(tela.largura * 0.40, tela.altura * 0.4, document.getElementById("Gaspar"));
+            antonio = new Imagem(tela.largura * 0.65, tela.altura * 0.41, document.getElementById("Antonio"));
+
+
+
+
+            clica = new Rectangulo(200, 300, 165, 250, "#674b3b", 0, 0);
+            clica2 = new Rectangulo(510, 300, 165, 250, "#674b3b", 0, 0);
+            clica3 = new Rectangulo(825, 300, 165, 250, "#674b3b", 0, 0);
+            clica4 = new Rectangulo(85, 637, 100, 50, "#674b3b", 0, 0);
+            clica.opacidade = 0;
+            clica2.opacidade = 0;
+            clica3.opacidade = 0;
+            clica4.opacidade = 0;
+
+
+
+
+            player = new Texto(235, 500, "João", "white", "white",  2);
+            player.fonte = "jacquard";
+            player.tamanho = 50;
+            player2 = new Texto(525, 500, "Gaspar", "white", "white",  2);
+            player2.fonte = "jacquard";
+            player2.tamanho = 50;
+            player3 = new Texto(830, 500, "António", "white", "white",  2);
+            player3.fonte = "jacquard";
+            player3.tamanho = 50;
+            player4 = new Texto(100, 650, "Voltar", "white", "white",  2);
+            player4.fonte = "jacquard";
+            player4.tamanho = 30;
+
+
+
+
+            fundo = new Imagem(0, 0, document.getElementById("fundo"));
+
+
+            tela.processaClique = processaClique;
+            tela.processaRatoDescido = processaRatoDescido;
+            tela.processaRatoSubido = processaRatoSubido;
+            tela.processaRatoMovido = processaRatoMovido;
+
+        }
+
+        function desenha() {
+            contexto.clearRect(0, 0, tela.largura, tela.altura);
+            fundo.desenha(tela);
+            joao.desenha(tela);
+            gaspar.desenha(tela);
+            antonio.desenha(tela);
+            clica.desenha(tela);
+            clica2.desenha(tela);
+            clica3.desenha(tela);
+            clica4.desenha(tela);
+            player.desenha(tela);
+            player2.desenha(tela);
+            player3.desenha(tela);
+            player4.desenha(tela);
+
+            window.requestAnimationFrame(desenha);
+        }
+
+        function processaClique() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //... 
+            
+
+        }
+
+        function processaRatoDescido() {
+            if (clica.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "Jogo1JOAO.html";
+            }
+            if (clica2.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "Jogo1GASPAR.html";
+            }
+            if (clica3.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "Jogo1ANTONIO.html";
+            }
+            if (clica4.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "index.html";
+            
+            }
+        }
+        
+        
+
+
+        function processaRatoMovido() {
+            // ...
+        }
+
+        function processaRatoSubido() {
+            //...
+        }
+
+
+        window.onload = function () {
+            inicia();
+            desenha();
+        }
+    </script>
+</head>
+
+<body class="color">
+    <canvas id="tela" width="1280" height="720"> o seu browser nao suporta o elemento canvas</canvas>
+    <div id="recursos">
+        <img id="fundo" src="recursos/fundo-01.png">
+        <img id="Joao" src="recursos/João.png">
+        <img id="Gaspar" src="recursos/Gaspar.png">
+        <img id="Antonio" src="recursos/Antonio.png">
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Arreganhadentes Escape</title>
+    <meta name="Arreganhadentes Escape" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jacquard+12&display=swap');
+
+        :root {
+            --gradiente: linear-gradient(45deg, #0f1921, #314054);
+
+        }
+
+        #recursos {
+            display: none;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .color {
+            background: var(--gradiente);
+        }
+
+        canvas {
+            border: 5px solid #F88379;
+            border-radius: 10px;
+        }
+    </style>
+    <script src="Ludoteca.js"></script>
+    <script>
+        var tela;
+        var contexto;
+        var continua = true;
+        var pausa = false;
+        var pausatxt;
+        var contador;
+        var fundo;
+        var fundoX = 0;
+        var som;
+
+
+        var racioX;
+        var racioY;
+
+        var ratoX;
+        var ratoY;
+
+        var player;
+        var lobos;
+        var direcaolobo;
+        var cenario;
+        var obstaculos;
+        var casa;
+
+        var delta;
+
+        var margemEsq, margemDir;
+        var limiteEsq, limiteDir;
+
+
+        var bernegia;
+        var somBernegia;
+        var pontos;
+        var pontuacao;
+        var p;
+        var pr;
+        var q;
+        var v;
+        var b;
+        var bf;
+
+        var chao;
+        var paredelobos;
+        var paredeplayer;
+        var plataforma;
+        //...
+
+        function inicia() {
+            tela = new Tela(document.getElementById("tela"));
+            contexto = tela.contexto;
+            contador = 0;
+
+            //fim do nivel
+            pontos = 0;
+            q = new Rectangulo(0, 0, tela.largura, tela.altura, "black");
+            q.opacidade = 0.4;
+            v = new Texto(500, 160, "Vitória!", "yellow");
+            v.tamanho = 100;
+            p = new Texto(585, 250, "Pontuação: " + pontos, "white", 2);
+            p.tamanho = 25;
+            b = new Texto(575, 380, "Continua", "white");
+            b.tamanho = 40;
+            bf = new Rectangulo(575, 380, 155, 35, "#674b3b", 0, 0);
+            bf.opacidade = 0;
+            q.activo = false;
+            v.activo = false;
+            p.activo = false;
+            b.activo = false;
+            bf.activo = false;
+            q.visivel = false;
+            v.visivel = false;
+            p.visivel = false;
+            b.visivel = false;
+            bf.visivel = false;
+
+
+
+
+            som = new Som(document.getElementById("musica"));
+            som.volume = 0.05;
+
+            fundo = new Imagem(0, 0, document.getElementById("fundo"), fundoX, 0);
+            casa = new Imagem(900, 350, document.getElementById("casa"));
+            casa.visivel = false;
+            casa.activo = false;
+            casap = new Rectangulo(900, 350, 100, 100, "black");
+
+
+            player = new ImagemAnimada(tela.largura * 0.1, tela.altura * 0.5, document.getElementById("player"), 4, 8, 2);
+            player.animado = false;
+            player.gravidade = 5;
+            player.deltaGravidade = -3;
+
+
+            lobos = new ImagemAnimada(400, 480, document.getElementById("lobos"), 15, 8, 3);
+            lobos.animado = true;
+            lobos.gravidade = 5;
+            lobos.deltaGravidade = -3.5;
+            lobos.deltaX = 2;
+            lobos.indiceTira = 2;
+
+
+            //Bolas de energia
+            bernegia = new Array();
+            bernegia.push(new ImagemAnimada(917, 160, document.getElementById("bolaEnergia"), 22, 8, 0.5));
+            bernegia.push(new ImagemAnimada(980, 200, document.getElementById("bolaEnergia"), 22, 8, 0.5));
+            bernegia.push(new ImagemAnimada(980, 200, document.getElementById("bolaEnergia"), 22, 8, 0.5));
+            bernegia.push(new ImagemAnimada(700, 550, document.getElementById("bolaEnergia"), 22, 8, 0.5));
+            bernegia[1].visivel = false;
+            bernegia[2].visivel = false;
+            bernegia[3].visivel = false;
+            bernegia[1].activo = false;
+            bernegia[2].activo = false;
+            bernegia[3].activo = false;
+
+
+
+            //plataformas
+            plataforma = new Rectangulo(950, 305, 140, 40, '#556B2F');
+            plataforma.activo = false;
+            plataforma.visivel = false;
+            plataforma1 = new Rectangulo(300, 550, 140, 40, "#556B2F");
+            plataforma1.activo = false;
+            plataforma1.visivel = false;
+            plataforma2 = new Rectangulo(600, 400, 140, 40, "#556B2F");
+            plataforma2.activo = false;
+            plataforma2.visivel = false;
+
+
+            // chao
+            chao = new Rectangulo(0, tela.altura - 165, 340, 195);
+            chao1 = new Rectangulo(465, tela.altura - 165, 900, 195);
+            chao2 = new Rectangulo(800, tela.altura - 380, 340, 500);
+            chao.visivel = false;
+            chao1.visivel = false;
+            chao2.visivel = false;
+
+            // paredes
+            paredelobos = new Rectangulo(450, 0, 20, tela.altura, "black");
+            paredelobos.activo = true;
+            paredelobos.visivel = false;
+            paredelobos1 = new Rectangulo(0, 0, 20, tela.altura, "black");
+            paredelobos1.visivel = false;
+            paredeplayer = new Rectangulo(1270, 0, 20, tela.altura, "black");
+            paredeplayer.visivel = false;
+            paredeplayer1 = new Rectangulo(1270, 0, 20, tela.altura, "black");
+            paredeplayer1.visivel = false;
+            paredeplayer2 = new Rectangulo(1270, 0, 20, tela.altura, "black");
+            paredeplayer2.visivel = false;
+            paredeplayer2.activo = false;
+
+
+
+
+
+            //degraus
+            obstaculos = new Array();
+
+
+
+            //limites do cenário
+            limiteEsq = new Rectangulo(-20, 0, 20, tela.altura, "black");
+            obstaculos.push(limiteEsq);
+            //limite do cenário: 3200
+            limiteDir = new Rectangulo(3200, 0, 20, tela.altura, "black");
+            obstaculos.push(limiteDir);
+
+            cenario = new Array();
+            //adiciona todos os obstaculos ao cenario
+            for (var i = 0; i < obstaculos.length; i++) {
+                cenario.push(lobos[i]);
+            }
+
+
+
+            // adicionar as moedas ao cenario
+            for (var i = 0; i < bernegia.length; i++) {
+                cenario.push(bernegia[i]);
+            }
+
+
+
+            somBernegia = new Som(document.getElementById("som_bernegia"));
+
+            pontuacao = new Texto(25, 25, pontos, "white", "white", 2);
+            pontuacao.tamanho = 64;
+
+            delta = 5;
+            player.salto = false;
+
+            //margens do cenario
+            margemEsq = 200;
+            margemDir = tela.largura - 200 - player.largura;
+
+            //...
+
+
+            tela.processaClique = processaClique;
+            tela.processaRatoDescido = processaRatoDescido;
+            tela.processaRatoSubido = processaRatoSubido;
+            tela.processaRatoMovido = processaRatoMovido;
+            tela.processaTeclaDescida = processaTeclaDescida;
+            tela.processaTeclaSubida = processaTeclaSubida;
+        }
+
+        function desenha() {
+            contexto.clearRect(0, 0, tela.largura, tela.altura);
+            fundo.desenha(tela);
+            som.reproduz();
+
+            lobos.desenha(tela);
+            player.desenha(tela);
+            casa.desenha(tela);
+
+            bernegia[0].desenha(tela);
+            bernegia[1].desenha(tela);
+            bernegia[2].desenha(tela);
+            bernegia[3].desenha(tela);
+
+            chao.desenha(tela);
+            chao1.desenha(tela);
+            chao2.desenha(tela);
+
+            plataforma.desenha(tela);
+            plataforma1.desenha(tela);
+            plataforma2.desenha(tela);
+
+            paredelobos.desenha(tela);
+            paredelobos1.desenha(tela);
+            paredeplayer.desenha(tela);
+            paredeplayer1.desenha(tela);
+            paredeplayer2.desenha(tela);
+
+            pontuacao.texto = pontos;
+            pontuacao.desenha(tela);
+
+
+            // FIM DO NIVEL1
+            q.desenha(tela);
+            v.desenha(tela);
+            p.desenha(tela);
+            b.desenha(tela);
+            bf.desenha(tela);
+
+
+
+            // colisão paredes
+            if (player.colide(paredeplayer, true)) {
+                fundo = new Imagem(-500, 0, document.getElementById("fundo"));
+                chao = new Rectangulo(0, tela.altura - 165, 2000, 195);
+                chao2 = new Rectangulo(300, tela.altura - 380, 350, 400);
+                chao.visivel = false;
+                chao2.visivel = false;
+                paredelobos.activo = false;
+                lobos.x = 0;
+                player.x = 700;
+                player.y = 500;
+                paredeplayer1.activo = true;
+                plataforma.activo = true;
+                plataforma.visivel = true;
+                bernegia[0].visivel = false;
+                bernegia[0].activo = false;
+                bernegia[1].visivel = true;
+                bernegia[1].activo = true;
+                paredeplayer.activo = false;
+
+            }
+            if (player.colide(paredeplayer1, true)) {
+                fundo = new Imagem(0, 0, document.getElementById("fundo2"));
+                chao = new Rectangulo(0, tela.altura - 60, 2000, 195);
+                chao.visivel = false;
+                chao2.activo = false;
+                chao2.visivel = false;
+                chao.opacidade = 0.5;
+                chao2.opacidade = 0.5;
+                bernegia[1].visivel = false;
+                bernegia[1].activo = false;
+                paredelobos.activo = false;
+                lobos.x = 0;
+                player.x = 120;
+                player.y = 700;
+                lobos.activo = false;
+                lobos.visivel = false;
+                chao2.activo = false;
+                chao1.activo = false;
+                plataforma1.activo = true;
+                plataforma1.visivel = true;
+                plataforma2.activo = true;
+                plataforma2.visivel = true;
+                bernegia[2].visivel = true;
+                bernegia[2].activo = true;
+                paredeplayer2.activo = true;
+                paredeplayer1.activo = false;
+            }
+            if (player.colide(paredeplayer2, true)) {
+                fundo = new Imagem(-870, 0, document.getElementById("fundo2"));
+                player.x = 120;
+                player.y = 700;
+                plataforma.activo = false;
+                plataforma.visivel = false;
+                plataforma1.activo = false;
+                plataforma1.visivel = false;
+                plataforma2.activo = false;
+                plataforma2.visivel = false;
+                plataforma.activo = false;
+                paredeplayer2.activo = false;
+                bernegia[2].visivel = false;
+                bernegia[2].activo = false;
+                bernegia[3].visivel = true;
+                bernegia[3].activo = true;
+                casa.visivel = true;
+                casa.activo = true;
+
+            }
+
+
+            
+
+            if (lobos.colide(paredelobos, true)) {
+                lobos.deltaX = 2;
+                lobos.indiceTira = 2;
+            }
+            if (lobos.colide(paredelobos1, true)) {
+                lobos.deltaX = 2;
+                lobos.indiceTira = 2;
+            }
+
+
+            // colisão player lobos
+            if (player.colide(lobos, true)) {
+                player.x = 120;
+                player.y = 400;
+                lobos.x = 500;
+                lobos.y = 480;
+                lobos.indiceTira = 2;
+                pontos = 0;
+                bernegia[0].visivel = true;
+                bernegia[0].activo = true;
+                fundo = new Imagem(0, 0, document.getElementById("fundo"));
+                chao = new Rectangulo(0, tela.altura - 165, 340, 195);
+                chao1 = new Rectangulo(465, tela.altura - 165, 900, 195);
+                chao2 = new Rectangulo(800, tela.altura - 380, 340, 500);
+                chao.opacidade = 0;
+                chao1.opacidade = 0;
+                chao2.opacidade = 0;
+                paredelobos.activo = true;
+                paredeplayer1.activo = true;
+            }
+
+
+            // colisões com o chão
+            if (player.colide(chao, true)) {
+                player.salto = true;
+            }
+            if (player.colide(chao1, true)) {
+                player.salto = true;
+            }
+            if (player.colide(chao2, true)) {
+                player.salto = true;
+            }
+
+            if (lobos.colide(chao, true)) {
+                lobos.salto = true;
+            }
+            if (lobos.colide(chao1, true)) {
+                lobos.salto = true;
+
+            }
+            if (lobos.colide(chao2, true)) {
+                lobos.salto = true;
+                lobos.deltaX = -2;
+                lobos.indiceTira = 0;
+            }
+
+            //colisao com plataformas
+
+            if (player.colide(plataforma, true)) {
+                player.salto = true;
+            }
+            if (player.colide(plataforma1, true)) {
+                player.salto = true;
+            }
+            if (player.colide(plataforma2, true)) {
+                player.salto = true;
+            }
+
+
+            if (player.colide(casa, true)) {
+                q.activo = true;
+                q.visivel = true;
+                v.activo = true;
+                v.visivel = true;
+                v.tamanho = 100;
+                p.activo = true;
+                p.visivel = true;
+                b.activo = true;
+                b.visivel = true;
+                bf.activo = true;
+                bf.visivel = true;
+            
+
+            }
+
+
+
+
+
+
+
+            if (player.x < margemEsq) {
+                if (limiteEsq.x + limiteEsq.largura < 0) {
+                    player.x = margemEsq;
+                    for (var i = 0; i < fundo.length; i++) {
+                        fundo[i].x += -player.deltaX;
+                    }
+                }
+            }
+
+            if (player.x > margemDir) {
+                if (limiteDir > tela.largura) {
+                    player.x = margemDir;
+                    for (var i = 0; i < fundo.length; i++) {
+                        fundo[i].x += -player.deltaX;
+                    }
+                }
+            }
+
+            if (player.y > tela.altura) {
+                player.x = 120;
+                player.y = 400;
+            }
+
+
+            for (var i = 0; i < obstaculos.length; i++) {
+                var posicaoPlayer = player.colide(obstaculos[i], true);
+                if (posicaoPlayer == Grafico.CIMA) {
+                    player.salto = true;
+                    player.repoeGravidade();
+                }
+                else if (posicaoPlayer == Grafico.BAIXO) {
+                    player.repoeGravidade();
+                }
+                else if (posicaoPlayer == Grafico.ESQUERDA) {
+                    //...
+                }
+                else if (posicaoPlayer == Grafico.DIREITA) {
+                    //...
+                }
+                else {
+                    //...
+                }
+            }
+
+
+            // colisões com as moedas
+            for (var i = 0; i < bernegia.length; i++) {
+                if (player.colide(bernegia[i])) {
+                    bernegia[i].visivel = false;
+                    bernegia[i].activo = false;
+                    somBernegia.reproduz(true);
+                    pontos += 100;
+                }
+            }
+
+            if (continua) {
+                contador++;
+                window.requestAnimationFrame(desenha);
+            }
+        }
+
+
+
+
+
+        function processaClique() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+
+        }
+
+        function processaRatoDescido() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+            if (bf.contemPonto(tela.ratoX, tela.ratoY)) {
+                window.location.href = "Jogo2ANTONIO.html";
+            }
+
+        }
+
+        function processaRatoSubido() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+
+        }
+
+        function processaRatoMovido() {
+            // usar as propriedades tela.ratoX e tela.ratoY, referentes às coordenadas do rato
+            //...
+
+        }
+
+        function processaTeclaDescida() {
+            // usar a propriedade tela.codigoTecla, referente à tecla usada pelo utilizador
+            if (tela.codigoTecla == "Space") {        // barra de espaços
+                if (player.salto) {
+                    player.inverteGravidade();
+                    player.salto = false;
+                    var jump = new Som(document.getElementById("pulo"));
+                    jump.reproduz();
+                }
+                //...
+
+            }
+            if (tela.codigoTecla == "ArrowLeft") {    // esquerda
+                player.indiceTira = 1;
+                player.deltaX = -5;
+                player.animado = true;
+
+                //...
+
+            }
+            if (tela.codigoTecla == "ArrowUp") {      // cima
+                //...
+
+            }
+            if (tela.codigoTecla == "ArrowRight") {   // direita
+                player.indiceTira = 0;
+                player.deltaX = 5;
+                player.animado = true;
+                //...
+            }
+
+            if (tela.codigoTecla == "ArrowDown") {    // baixo
+                //...
+
+            }
+            if (tela.codigoTecla == "e") { // Interação
+                //...
+            }
+            if (event.key == 'p' || event.key === 'P') {  // Pausa
+                if (pausa) {
+                    // Se o jogo estiver pausado, retome o jogo
+                    retomaJogo();
+                    pausa = false;
+                    continua = true;
+
+                } else {
+                    // Se o jogo não estiver pausado, pause o jogo
+                    pausaJogo();
+                    pausa = true;
+                    continua = false;
+
+                }
+            }
+        }
+
+        function processaTeclaSubida() {
+            // usar a propriedade tela.codigoTecla, referente à tecla usada pelo utilizador
+            if (tela.codigoTecla == "Space") {
+                //...
+            }
+            if ((tela.codigoTecla == "ArrowLeft") || (tela.codigoTecla == "ArrowRight")) {
+                player.indiceTira = 0;
+                player.deltaX = 0;
+                player.animado = false;
+                //...
+            }
+            if ((tela.codigoTecla == "ArrowUp") || (tela.codigoTecla == "ArrowDown")) {
+                //...
+            }
+            if (tela.codigoTecla == "E") {
+                //...
+            }
+            if (tela.codigoTecla == "P") {
+                //...
+            }
+        }
+
+        function pausaJogo() {
+            //...
+            pausa = true;
+            continua = false;
+            console.log("Jogo em pausa");
+
+        }
+
+        function retomaJogo() {
+            //...
+            pausa = false;
+            continua = true;
+            console.log("Jogo retomado");
+            window.requestAnimationFrame(desenha);
+        }
+
+        window.onload = function () {
+            inicia();
+            desenha();
+        }
+    </script>
+</head>
+
+<body class="color">
+    <canvas id="tela" width="1280" height="720">O seu <em>browser</em> não suporta o elemento</canvas>
+    <div id="recursos">
+        <audio id="musica" src="recursos/nightshade.mp3" autoplay></audio>
+        <audio id="som_bernegia" src="recursos/bolaE.wav" type="audio/wav"></audio>
+        <audio id="pulo" src="recursos/smw_kick.wav"></audio>
+        <img id="fundo" src="recursos/jogo1.png">
+        <img id="fundo2" src="recursos/jogo3-01.png">
+        <img id="casa" src="recursos/house.png">
+        <img id="player" src="recursos/AntonioAndar.png">
+        <img id="lobos" src="recursos/lobo.png">
+        <img id="bolaEnergia" src="recursos/bolaEnergia.png">
+        <img id="audio" src="recursos/audio.png">
+        <img id="audio2" src="recursos/audio2.png">
+    </div>
+</body>
+
+</html>

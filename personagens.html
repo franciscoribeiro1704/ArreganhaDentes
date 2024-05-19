@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <title>Arreganhadentes Escape</title>
+    <meta charset="UTF-8">
+    <meta name="Arreganhadentes Escape" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<script>
+    var tela;
+    var contexto;
+    var personagens;
+    var cenaAtual = 0;
+
+    function inicia() {
+        tela = document.getElementById("tela");
+        contexto = tela.getContext("2d");
+
+        personagens = new Image();
+        personagens.src = "recursos/person.png";
+        personagens.onload = function() {
+            desenha();
+        }
+    }
+    
+    function desenha() {
+        contexto.clearRect(0, 0, tela.width, tela.height);
+        contexto.drawImage(personagens, 0, 0, tela.width, tela.height);
+
+        if (cenaAtual === 4) {
+            var url = "index.html";
+            window.location = url;
+            window.location.replace(url);
+        }
+    }
+
+    function botaoClicado(cena) {
+        cenaAtual = cena;
+        desenha();
+    }
+</script>
+<body class="color" onload="inicia();">
+    <div class="canvas-container">
+        <canvas id="tela" width="1280" height="720"> o seu browser nao suporta o elemento canvas</canvas>
+        
+        <div class="voltar">
+            <button onclick = "botaoClicado(4)">Voltar</button>
+        </div>
+    </div>
+    
+</body>
+</html>
